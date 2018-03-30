@@ -1,6 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using DG.Tweening;
 
 [RequireComponent(typeof(Rigidbody))]
 public class CanonBall : MonoBehaviour {
@@ -27,10 +26,16 @@ public class CanonBall : MonoBehaviour {
 
     private void Update()
     {
-        if (!Canon.isAllowedToFire)
+        if (gameObject.transform.position.y < 0f)
+        {
+            Destroy(gameObject);
+            return;
+        }
+            if (!Canon.isAllowedToFire)
         {
             mainCameraView.FollowCanonBall(gameObject, CameraPositionToFollowBall.position);
         }
+        
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -38,14 +43,36 @@ public class CanonBall : MonoBehaviour {
         if (collision.gameObject.CompareTag("Target"))
         {
             mainCameraView.ResetCameraPosition();
-            Destroy(collision.gameObject, 2);
-            //if (GameManager.Instance != null) GameManager.Instance.NextLevel();
+            Transform targetTransform = collision.gameObject.transform;
+
+            targetTransform.DOScale(0, 1f).SetEase(Ease.InOutCirc).OnComplete(delegate
+            {
+                Destroy(collision.gameObject, 2);
+            });
+            
         }
-        if (collision.gameObject.CompareTag("Ground"))
+        else if (collision.gameObject.CompareTag("Tree"))
         {
             mainCameraView.ResetCameraPosition();
-            Destroy(gameObject, 2);
+            Transform treeTransform = collision.gameObject.transform;
+
+            treeTransform.DORotate(new Vector3(75, treeTransform.localEulerAngles.y, treeTransform.localEulerAngles.z), 2)
+                    .SetEase(Ease.InExpo)
+                    .OnComplete
+            (delegate
+                {
+                    Destroy(collision.gameObject, 1);
+                }
+            );
+            
+            Destroy(gameObject, 1);
         }
+        else if (collision.gameObject.CompareTag("Ground"))
+        {
+            mainCameraView.ResetCameraPosition();
+            Destroy(gameObject, 1);
+        }
+        
         Canon.isAllowedToFire = true;
     }
 }

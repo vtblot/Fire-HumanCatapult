@@ -15,14 +15,30 @@ public class Canon : MonoBehaviour
     [Header("Canon Ball Configuration")]
     [SerializeField]
     private GameObject canonBallPrefab;
-    [SerializeField]
-    private int ammunitions;
+    public int ammunitions;
 
-    public static bool isAllowedToFire = true;
+    public static bool isAllowedToFire;
 
 
     private float horizontal;
     private float vertical;
+
+    private void Start()
+    {
+        InitCanon();
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.OnLevelChanged += LevelChanged;
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.OnLevelChanged -= LevelChanged;
+        }
+    }
 
     private void Update()
     {
@@ -46,5 +62,16 @@ public class Canon : MonoBehaviour
                 isAllowedToFire = false;
             }
         }
+    }
+
+    private void LevelChanged()
+    {
+        InitCanon();
+    }
+
+    public void InitCanon()
+    {
+        ammunitions = 3;
+        isAllowedToFire = true;
     }
 }

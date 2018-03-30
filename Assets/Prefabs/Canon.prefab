@@ -44,6 +44,21 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &1474910291860742
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4263264402869646}
+  m_Layer: 0
+  m_Name: CanonViewAnchor
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!1 &1680133450158244
 GameObject:
   m_ObjectHideFlags: 0
@@ -124,6 +139,19 @@ Transform:
   m_Father: {fileID: 4713906934239632}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
+--- !u!4 &4263264402869646
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1474910291860742}
+  m_LocalRotation: {x: 0.15388592, y: -0.0008883476, z: 0.00012477141, w: 0.9880882}
+  m_LocalPosition: {x: 0.121941864, y: 5.553413, z: -5.017563}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4311115649292272}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4311115649292272
 Transform:
   m_ObjectHideFlags: 1
@@ -137,6 +165,7 @@ Transform:
   - {fileID: 4772118133789854}
   - {fileID: 4999615128843926}
   - {fileID: 4393761401086600}
+  - {fileID: 4263264402869646}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -208,7 +237,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: 4885129b964c1df43b3feecb3021acfd, type: 2}
+  - {fileID: 2100000, guid: d6a45a1f63bb8a24c9253d425d2425c2, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

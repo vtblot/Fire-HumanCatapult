@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour {
 
@@ -26,7 +27,11 @@ public class GameManager : MonoBehaviour {
 
     private void Awake()
     {
-        if (m_Instance == null) m_Instance = this;
+        if (m_Instance == null)
+        {
+            m_Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
         else Destroy(gameObject);
     }
 
@@ -47,6 +52,7 @@ public class GameManager : MonoBehaviour {
         if (currentLevel < totalLevels)
         {
             currentLevel++;
+            SceneManager.LoadScene(currentLevel);
             if (OnLevelChanged != null) OnLevelChanged();
         }
         else
