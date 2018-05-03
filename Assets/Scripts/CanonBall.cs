@@ -42,6 +42,7 @@ public class CanonBall : MonoBehaviour {
     {
         if (collision.gameObject.CompareTag("Target"))
         {
+            if (TargetManager.Instance != null) TargetManager.Instance.TargetHit(20);
             mainCameraView.ResetCameraPosition();
             Transform targetTransform = collision.gameObject.transform;
 

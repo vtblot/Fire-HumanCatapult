@@ -21,9 +21,13 @@ public class GameManager : MonoBehaviour {
     public event Action OnGameVictory;
     public event Action OnGameOver;
     public event Action OnLevelChanged;
+    public event Action OnFire;
+    public event Action<int> ScoreChanged;
 
     private int currentLevel;
     private int totalLevels = 3;
+
+    private int totalScore;
 
     private void Awake()
     {
@@ -37,14 +41,23 @@ public class GameManager : MonoBehaviour {
 
     private void Start()
     {
-        InitGame();
-
         OnGameOver += GameOver;
+        currentLevel = 0;
+        totalScore = 0;
+        if (OnGameMenu != null) OnGameMenu();
     }
 
-    private void InitGame()
+    public void ReplayGame()
     {
         currentLevel = 0;
+        totalScore = 0;
+        if (OnGamePlay != null) OnGamePlay();
+        if (ScoreChanged != null) ScoreChanged(totalScore);
+    }
+
+    public void StartGame()
+    {
+        if (OnGamePlay != null) OnGamePlay();
     }
 
     public void NextLevel()
@@ -57,8 +70,23 @@ public class GameManager : MonoBehaviour {
         }
         else
         {
+            if(totalScore > PlayerPrefs.GetInt("HighScore", 0))
+            {
+                PlayerPrefs.SetInt("HighScore", totalScore);
+            }
             if (OnGameVictory != null) OnGameVictory();
         }
+    }
+
+    public void ShotFired()
+    {
+        if (OnFire != null) OnFire();
+    }
+
+    public void UpdateScore(int score)
+    {
+        totalScore += score;
+        if (ScoreChanged != null) ScoreChanged(totalScore);
     }
 
     private void GameOver()

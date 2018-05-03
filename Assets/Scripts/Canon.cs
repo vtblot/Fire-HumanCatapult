@@ -60,6 +60,10 @@ public class Canon : MonoBehaviour
                 Instantiate(canonBallPrefab, spawner.position, spawner.rotation);
                 ammunitions--;
                 isAllowedToFire = false;
+                if(GameManager.Instance != null)
+                {
+                    GameManager.Instance.ShotFired();
+                }
             }
         }
     }

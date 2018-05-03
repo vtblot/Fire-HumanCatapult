@@ -59,4 +59,9 @@ public class TargetManager : MonoBehaviour {
         AddTargetsToList();
     }
 
+    public void TargetHit(int score)
+    {
+        if (GameManager.Instance != null) GameManager.Instance.UpdateScore(score);
+    }
+
 }
