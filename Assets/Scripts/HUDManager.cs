@@ -16,12 +16,15 @@ public class HUDManager : MonoBehaviour
             return m_Instance;
         }
     }
+
+    [SerializeField]
+    private Canvas HUDCanvas;
     [SerializeField]
     private List<Image> AmmosAvailable = new List<Image>();
     [SerializeField]
     private TextMeshProUGUI AmmoText;
     [SerializeField]
-    private Text scoreText;
+    private TextMeshProUGUI scoreText;
 
     private void Awake()
     {
@@ -35,6 +38,7 @@ public class HUDManager : MonoBehaviour
         if (GameManager.Instance != null)
         {
             GameManager.Instance.OnFire += OnFire;
+            GameManager.Instance.OnGameMenu += MainMenu;
             GameManager.Instance.ScoreChanged += ScoreChanged;
             GameManager.Instance.OnGamePlay += GamePlay;
             GameManager.Instance.OnGameVictory += GameVictory;
@@ -49,6 +53,7 @@ public class HUDManager : MonoBehaviour
         {
             ammo.enabled = true;
         }
+        scoreText.text = "0";
     }
 
     private void OnDestroy()
@@ -57,6 +62,7 @@ public class HUDManager : MonoBehaviour
         if (GameManager.Instance != null)
         {
             GameManager.Instance.OnFire -= OnFire;
+            GameManager.Instance.OnGameMenu -= MainMenu;
             GameManager.Instance.ScoreChanged -= ScoreChanged;
             GameManager.Instance.OnGamePlay -= GamePlay;
             GameManager.Instance.OnGameVictory -= GameVictory;
@@ -86,17 +92,22 @@ public class HUDManager : MonoBehaviour
 
     private void GamePlay()
     {
-        //SHOW SCORE TEXT
+        HUDCanvas.enabled = true;
     }
 
     private void GameVictory()
     {
-        //UPDATE HIGHSCORE TEXT
+        HUDCanvas.enabled = false;
     }
 
     private void GameOver()
     {
-        //UPDATE HIGHSCORE TEXT
+        HUDCanvas.enabled = false;
+    }
+
+    private void MainMenu()
+    {
+        HUDCanvas.enabled = false;
     }
 }
 

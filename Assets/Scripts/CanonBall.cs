@@ -12,11 +12,14 @@ public class CanonBall : MonoBehaviour {
 
     private Transform CameraPositionToFollowBall;
 
+    private Canon canon;
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
         mainCameraView = FindObjectOfType<CameraView>();
         CameraPositionToFollowBall = gameObject.transform.GetChild(0);
+        canon = FindObjectOfType<Canon>();
     }
 
     // Use this for initialization
@@ -42,15 +45,11 @@ public class CanonBall : MonoBehaviour {
     {
         if (collision.gameObject.CompareTag("Target"))
         {
-            if (TargetManager.Instance != null) TargetManager.Instance.TargetHit(20);
+            if (TargetManager.Instance != null) TargetManager.Instance.TargetHit(collision.gameObject,20);
+            canon.ShotHit(true);
             mainCameraView.ResetCameraPosition();
             Transform targetTransform = collision.gameObject.transform;
-
-            targetTransform.DOScale(0, 1f).SetEase(Ease.InOutCirc).OnComplete(delegate
-            {
-                Destroy(collision.gameObject, 2);
-            });
-            
+            targetTransform.DOScale(0, 1f).SetEase(Ease.InOutCirc);
         }
         else if (collision.gameObject.CompareTag("Tree"))
         {
@@ -65,13 +64,14 @@ public class CanonBall : MonoBehaviour {
                     Destroy(collision.gameObject, 1);
                 }
             );
-            
+            canon.ShotHit(false);
             Destroy(gameObject, 1);
         }
         else if (collision.gameObject.CompareTag("Ground"))
         {
             mainCameraView.ResetCameraPosition();
-            Destroy(gameObject, 1);
+            canon.ShotHit(false);
+            Destroy(gameObject);
         }
         
         Canon.isAllowedToFire = true;

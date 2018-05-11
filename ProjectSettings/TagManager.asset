@@ -8,6 +8,7 @@ TagManager:
   - Target
   - Ground
   - Tree
+  - Canon
   layers:
   - Default
   - TransparentFX

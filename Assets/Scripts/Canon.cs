@@ -18,7 +18,8 @@ public class Canon : MonoBehaviour
     public int ammunitions;
 
     public static bool isAllowedToFire;
-
+    private int ammunitionsAtStart;
+    private int counterShotNotHitTarget;
 
     private float horizontal;
     private float vertical;
@@ -44,8 +45,7 @@ public class Canon : MonoBehaviour
     {
         horizontal = Input.GetAxis("Horizontal");
         vertical = Input.GetAxis("Vertical");
-
-        // pivotTube.Rotate(new Vector3(vertical, 0, -horizontal) * rotationSpeed * Time.deltaTime);
+        
         pivotTube.localEulerAngles =
             new Vector3(
                 Utilities.ClampAngle(pivotTube.localEulerAngles.x + (vertical * rotationSpeed * Time.deltaTime), -70, -10),
@@ -76,6 +76,23 @@ public class Canon : MonoBehaviour
     public void InitCanon()
     {
         ammunitions = 3;
+        ammunitionsAtStart = ammunitions;
+        counterShotNotHitTarget = 0;
         isAllowedToFire = true;
+    }
+
+    public void ShotHit(bool shotHitTarget)
+    {
+        if (!shotHitTarget)
+        {
+            counterShotNotHitTarget++;
+            if (counterShotNotHitTarget >= ammunitionsAtStart)
+                if (GameManager.Instance != null) GameManager.Instance.GameOver();
+        }
+        else
+        {
+            if (ammunitions > 0)
+                ammunitions--;
+        }
     }
 }

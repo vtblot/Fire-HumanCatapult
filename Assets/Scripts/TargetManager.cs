@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class TargetManager : MonoBehaviour {
 
-    List<GameObject> m_Targets = new List<GameObject>();
+    private List<GameObject> m_Targets = new List<GameObject>();
+    private bool isLevelFinished;
 
     private static TargetManager m_Instance;
 
@@ -20,21 +21,21 @@ public class TargetManager : MonoBehaviour {
     {
         if (m_Instance == null) m_Instance = this;
         else Destroy(gameObject);
+        isLevelFinished = false;
     }
 
     private void Start()
     {
-        AddTargetsToList();
-
+        UpdateTargetList();
         if (GameManager.Instance != null)
         {
             GameManager.Instance.OnLevelChanged += LevelChanged;
         }
     }
-
+    
     private void OnDestroy()
     {
-        AddTargetsToList();
+        UpdateTargetList();
 
         if (GameManager.Instance != null)
         {
@@ -42,10 +43,8 @@ public class TargetManager : MonoBehaviour {
         }
     }
 
-    void AddTargetsToList()
+    void UpdateTargetList()
     {
-        if (m_Targets.Count > 0)
-            m_Targets.Clear();
 
         GameObject[] existingTargets = GameObject.FindGameObjectsWithTag("Target");
         foreach (var target in existingTargets)
@@ -56,12 +55,29 @@ public class TargetManager : MonoBehaviour {
 
     private void LevelChanged()
     {
-        AddTargetsToList();
+        UpdateTargetList();
     }
 
-    public void TargetHit(int score)
+    public void TargetHit(GameObject Target, int score)
     {
         if (GameManager.Instance != null) GameManager.Instance.UpdateScore(score);
+        RemoveFromList(Target);
+    }
+
+    private void RemoveFromList(GameObject go)
+    {
+        m_Targets.Remove(go);
+        Destroy(go,2);
+        if (m_Targets.Count == 0)
+        {
+            isLevelFinished = true;
+            if (GameManager.Instance != null) GameManager.Instance.ChangeLevel();
+        }
+    }
+
+    public bool CheckIfLevelFinished()
+    {
+        return isLevelFinished;
     }
 
 }
