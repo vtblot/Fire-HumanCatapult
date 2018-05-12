@@ -28,7 +28,11 @@ public class HUDManager : MonoBehaviour
 
     private void Awake()
     {
-        if (m_Instance == null) m_Instance = this;
+        if (m_Instance == null)
+        {
+            m_Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
         else Destroy(gameObject);
     }
 
@@ -39,6 +43,7 @@ public class HUDManager : MonoBehaviour
         {
             GameManager.Instance.OnFire += OnFire;
             GameManager.Instance.OnGameMenu += MainMenu;
+            GameManager.Instance.OnLevelChanged += LevelChanged;
             GameManager.Instance.ScoreChanged += ScoreChanged;
             GameManager.Instance.OnGamePlay += GamePlay;
             GameManager.Instance.OnGameVictory += GameVictory;
@@ -49,10 +54,6 @@ public class HUDManager : MonoBehaviour
     private void Init()
     {
         AmmoText.enabled = true;
-        foreach (var ammo in AmmosAvailable)
-        {
-            ammo.enabled = true;
-        }
         scoreText.text = "0";
     }
 
@@ -63,6 +64,7 @@ public class HUDManager : MonoBehaviour
         {
             GameManager.Instance.OnFire -= OnFire;
             GameManager.Instance.OnGameMenu -= MainMenu;
+            GameManager.Instance.OnLevelChanged -= LevelChanged;
             GameManager.Instance.ScoreChanged -= ScoreChanged;
             GameManager.Instance.OnGamePlay -= GamePlay;
             GameManager.Instance.OnGameVictory -= GameVictory;
@@ -108,6 +110,21 @@ public class HUDManager : MonoBehaviour
     private void MainMenu()
     {
         HUDCanvas.enabled = false;
+    }
+
+    private void LevelChanged()
+    {
+        AmmosAvailable = new List<Image>();
+        List<GameObject> tmp = new List<GameObject>(GameObject.FindGameObjectsWithTag("CanonBallText"));
+        foreach (var gameObject in tmp)
+        {
+            AmmosAvailable.Add(gameObject.GetComponent<Image>());
+        }
+        foreach (var ammo in AmmosAvailable)
+        {
+            if (!ammo.enabled)
+                ammo.enabled = true;
+        }
     }
 }
 

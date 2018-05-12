@@ -46,6 +46,8 @@ public class CanonBall : MonoBehaviour {
         if (collision.gameObject.CompareTag("Target"))
         {
             if (TargetManager.Instance != null) TargetManager.Instance.TargetHit(collision.gameObject,20);
+            FindObjectOfType<AudioManager>().Play("Ding");
+            Destroy(gameObject);
             canon.ShotHit(true);
             mainCameraView.ResetCameraPosition();
             Transform targetTransform = collision.gameObject.transform;
@@ -55,6 +57,7 @@ public class CanonBall : MonoBehaviour {
         {
             mainCameraView.ResetCameraPosition();
             Transform treeTransform = collision.gameObject.transform;
+            FindObjectOfType<AudioManager>().Play("treefallingdown");
 
             treeTransform.DORotate(new Vector3(75, treeTransform.localEulerAngles.y, treeTransform.localEulerAngles.z), 2)
                     .SetEase(Ease.InExpo)
@@ -69,6 +72,7 @@ public class CanonBall : MonoBehaviour {
         }
         else if (collision.gameObject.CompareTag("Ground"))
         {
+            FindObjectOfType<AudioManager>().Play("HitSomething");
             mainCameraView.ResetCameraPosition();
             canon.ShotHit(false);
             Destroy(gameObject);

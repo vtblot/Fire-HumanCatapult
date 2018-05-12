@@ -9,6 +9,8 @@ TagManager:
   - Ground
   - Tree
   - Canon
+  - CanonBallText
+  - AudioManager
   layers:
   - Default
   - TransparentFX

@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour {
 
@@ -15,6 +14,8 @@ public class GameManager : MonoBehaviour {
             return m_Instance;
         }
     }
+    [SerializeField]
+    private GameObject[] levels;
 
     public event Action OnGameMenu;
     public event Action OnGamePlay;
@@ -27,7 +28,7 @@ public class GameManager : MonoBehaviour {
     private PlayerProgress playerProgress;
 
     private int currentLevel;
-    private int totalLevels = 0;
+    private int totalLevels = 1;
 
     private int totalScore;
 
@@ -39,14 +40,13 @@ public class GameManager : MonoBehaviour {
             DontDestroyOnLoad(gameObject);
         }
         else Destroy(gameObject);
-
-        
     }
 
     private void Start()
     {
         currentLevel = 0;
         totalScore = 0;
+        LoadLevel(currentLevel);
         LoadHighScore();
         if (OnGameMenu != null) OnGameMenu();
     }
@@ -55,7 +55,9 @@ public class GameManager : MonoBehaviour {
     {
         currentLevel = 0;
         totalScore = 0;
-        SceneManager.LoadScene(0);
+        LoadLevel(currentLevel);
+        if (TargetManager.Instance != null) TargetManager.Instance.ResetTargets();
+        if (OnLevelChanged != null) OnLevelChanged();
         if (OnGamePlay != null) OnGamePlay();
         if (ScoreChanged != null) ScoreChanged(totalScore);
     }
@@ -72,15 +74,13 @@ public class GameManager : MonoBehaviour {
             bool isLevelFinished = TargetManager.Instance.CheckIfLevelFinished();
             if(isLevelFinished)
             {
-                if (currentLevel < totalLevels)
+                if (currentLevel <= totalLevels)
                 {
                     currentLevel++;
-                    //SceneManager.LoadScene(currentLevel);
-                    if (OnLevelChanged != null) OnLevelChanged();
                 }
             }
         }
-        if (currentLevel >= totalLevels)
+        if (currentLevel > totalLevels)
         {
             if (totalScore >= playerProgress.m_highestScore)
             {
@@ -88,6 +88,22 @@ public class GameManager : MonoBehaviour {
             }
             if (OnGameVictory != null) OnGameVictory();
         }
+        else
+        {
+            LoadLevel(currentLevel);
+            if (OnLevelChanged != null) OnLevelChanged();
+        }
+    }
+
+    private void LoadLevel(int level)
+    {
+            for(int i = 0;  i<levels.Length;i++)
+            {
+                if (levels[i].activeInHierarchy)
+                    levels[i].SetActive(false);
+            }
+            levels[level].SetActive(true);
+        
     }
 
     public void ShotFired()
@@ -126,6 +142,11 @@ public class GameManager : MonoBehaviour {
         totalScore += score;
         if (ScoreChanged != null) ScoreChanged(totalScore);
         
+    }
+
+    public int GetCurrentLevel()
+    {
+        return currentLevel;
     }
 
     public void GameOver()

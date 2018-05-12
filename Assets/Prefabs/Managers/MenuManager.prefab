@@ -51,3 +51,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff8ffe9e1bd72b344b0b2d32d4fc6e0d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  MainMenuCanvas: {fileID: 0}
+  EndCanvas: {fileID: 0}
+  WinMessage: {fileID: 0}
+  LooseMessage: {fileID: 0}
+  endScoreText: {fileID: 0}
+  highScoreText: {fileID: 0}

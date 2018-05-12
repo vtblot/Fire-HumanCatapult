@@ -30,27 +30,33 @@ public class MenuManager : MonoBehaviour {
     private TextMeshProUGUI endScoreText;
     [SerializeField]
     private TextMeshProUGUI highScoreText;
-
+    
 
 
     private void Awake()
     {
-        if (m_Instance == null) m_Instance = this;
+        if (m_Instance == null)
+        {
+            m_Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
         else Destroy(gameObject);
-    }
-
-    private void Start()
-    {
         if (GameManager.Instance != null)
         {
-            GameManager.Instance.OnGameMenu += MainMenu;
+            GameManager.Instance.OnGameMenu += GameMenu;
             GameManager.Instance.OnGameVictory += GameVictory;
             GameManager.Instance.OnGameOver += GameOver;
         }
     }
-
-    private void MainMenu()
+    
+    private void Start()
     {
+       
+    }
+
+    private void GameMenu()
+    {
+        FindObjectOfType<AudioManager>().Play("Intro");
         MainMenuCanvas.enabled = true;
         Cursor.visible = true;
     }
@@ -59,6 +65,7 @@ public class MenuManager : MonoBehaviour {
     {
         MainMenuCanvas.enabled = false;
         Cursor.visible = false;
+        FindObjectOfType<AudioManager>().Stop("Intro");
         if (GameManager.Instance != null) GameManager.Instance.StartGame();
     }
 
@@ -69,6 +76,11 @@ public class MenuManager : MonoBehaviour {
 
     public void Replay()
     {
+        if(FindObjectOfType<AudioManager>().IsPlaying("Success"))
+            FindObjectOfType<AudioManager>().Stop("Success");
+        else if(FindObjectOfType<AudioManager>().IsPlaying("GameOver"))
+            FindObjectOfType<AudioManager>().Stop("GameOver");
+
         if (EndCanvas.enabled)
             EndCanvas.enabled = false;
         else if (WinMessage.enabled)
@@ -82,6 +94,7 @@ public class MenuManager : MonoBehaviour {
 
     private void GameVictory()
     {
+        FindObjectOfType<AudioManager>().Play("Success");
         if (GameManager.Instance != null) highScore = GameManager.Instance.GetHighestScore();
         highScoreText.text = highScore.ToString();
         if (GameManager.Instance != null) score = GameManager.Instance.GetEndScore();
@@ -93,6 +106,7 @@ public class MenuManager : MonoBehaviour {
 
     private void GameOver()
     {
+        FindObjectOfType<AudioManager>().Play("GameOver");
         if (GameManager.Instance != null) highScore = GameManager.Instance.GetHighestScore();
         highScoreText.text = highScore.ToString();
         if (GameManager.Instance != null) score = GameManager.Instance.GetEndScore();
@@ -106,7 +120,7 @@ public class MenuManager : MonoBehaviour {
     {
         if (GameManager.Instance != null)
         {
-            GameManager.Instance.OnGameMenu -= MainMenu;
+            GameManager.Instance.OnGameMenu -= GameMenu;
             GameManager.Instance.OnGameVictory -= GameVictory;
             GameManager.Instance.OnGameOver -= GameOver;
         }

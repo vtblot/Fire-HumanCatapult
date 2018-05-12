@@ -51,8 +51,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 000b259d62949974f8861cd653d17e8c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  HUDCanvas: {fileID: 0}
   AmmosAvailable:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
   AmmoText: {fileID: 0}
+  scoreText: {fileID: 0}

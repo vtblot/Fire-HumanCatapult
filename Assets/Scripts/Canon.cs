@@ -15,7 +15,8 @@ public class Canon : MonoBehaviour
     [Header("Canon Ball Configuration")]
     [SerializeField]
     private GameObject canonBallPrefab;
-    public int ammunitions;
+    [SerializeField]
+    private int ammunitions;
 
     public static bool isAllowedToFire;
     private int ammunitionsAtStart;
@@ -24,13 +25,18 @@ public class Canon : MonoBehaviour
     private float horizontal;
     private float vertical;
 
-    private void Start()
+    private void Awake()
     {
-        InitCanon();
         if (GameManager.Instance != null)
         {
             GameManager.Instance.OnLevelChanged += LevelChanged;
+            GameManager.Instance.OnGamePlay += GamePlay;
         }
+    }
+
+    private void Start()
+    {
+        InitCanon();
     }
 
     private void OnDestroy()
@@ -38,6 +44,7 @@ public class Canon : MonoBehaviour
         if (GameManager.Instance != null)
         {
             GameManager.Instance.OnLevelChanged -= LevelChanged;
+            GameManager.Instance.OnGamePlay -= GamePlay;
         }
     }
 
@@ -45,11 +52,11 @@ public class Canon : MonoBehaviour
     {
         horizontal = Input.GetAxis("Horizontal");
         vertical = Input.GetAxis("Vertical");
-        
+
         pivotTube.localEulerAngles =
             new Vector3(
                 Utilities.ClampAngle(pivotTube.localEulerAngles.x + (vertical * rotationSpeed * Time.deltaTime), -70, -10),
-                Utilities.ClampAngle(pivotTube.localEulerAngles.y + (horizontal * rotationSpeed * Time.deltaTime), -45, 45), 
+                Utilities.ClampAngle(pivotTube.localEulerAngles.y + (horizontal * rotationSpeed * Time.deltaTime), -45, 45),
                 0f
                 );
 
@@ -57,15 +64,20 @@ public class Canon : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.Space))
             {
+                FindObjectOfType<AudioManager>().Play("CanonShot");
                 Instantiate(canonBallPrefab, spawner.position, spawner.rotation);
-                ammunitions--;
                 isAllowedToFire = false;
-                if(GameManager.Instance != null)
+                if (GameManager.Instance != null)
                 {
                     GameManager.Instance.ShotFired();
                 }
             }
         }
+    }
+
+    private void GamePlay()
+    {
+        InitCanon();
     }
 
     private void LevelChanged()
@@ -83,16 +95,19 @@ public class Canon : MonoBehaviour
 
     public void ShotHit(bool shotHitTarget)
     {
+        ammunitions = ammunitions - 1;
         if (!shotHitTarget)
         {
             counterShotNotHitTarget++;
-            if (counterShotNotHitTarget >= ammunitionsAtStart)
-                if (GameManager.Instance != null) GameManager.Instance.GameOver();
-        }
-        else
-        {
-            if (ammunitions > 0)
-                ammunitions--;
+            int currentLevel;
+            if (GameManager.Instance != null)
+            {
+                currentLevel = GameManager.Instance.GetCurrentLevel();
+                if (currentLevel == 0 && counterShotNotHitTarget >= ammunitionsAtStart)
+                    GameManager.Instance.GameOver();
+                if (currentLevel == 1 && counterShotNotHitTarget == 2)
+                    GameManager.Instance.GameOver();
+            }
         }
     }
 }
